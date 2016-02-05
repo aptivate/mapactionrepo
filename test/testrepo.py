@@ -4,7 +4,6 @@ Functional tests for the Map Repository.
 
 import os
 import unittest
-import urllib
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -27,21 +26,8 @@ class Test(unittest.TestCase):
         self.browser.implicitly_wait(WAIT_TIME)
         self.addCleanup(self.browser.quit)
     
-    #Just checking testing is working
-    """
-    def test_testing(self):
-        self.assertTrue(True)
 
-
-    #simple test checking there is something at the home page's URL.
-    def test_simple_home_page_existence(self):
-
-        page = urllib.urlopen(BASE_URL)
-        contents = page.read()
-        self.assertTrue(contents != None)
-    """
-
-    #Simple browser based test checking there's a plausible page at the home page's URL.
+    #Simple test checking there's a plausible page at the home page's URL.
     def test_home_page(self):
 
         self.browser.get(BASE_URL)
