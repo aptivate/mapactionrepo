@@ -63,4 +63,4 @@ target/
 
 #Aptivate standard ignores
 .ve
-C:\nppdf32Log\debuglog.txt
+C:\\nppdf32Log\\debuglog.txt
