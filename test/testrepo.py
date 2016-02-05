@@ -7,12 +7,16 @@ import unittest
 import urllib
 
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 BASE_URL = 'http://lin-mapactionrepo-stage.aptivate.org/'
 USER = 'aptivate'
 PASS = os.environ['TESTPASS']
-
+TEST_ZIP_FILE = os.path.join('test_data', 'MA001_Aptivate_Example.zip')
+TEST_TITLE = 'Central African Republic: \nExample Map-\nReference\n(as of 3 Feb 2099)'
 
 WAIT_TIME = 5   #wait up to 5 seconds for pages to load
 
@@ -57,6 +61,7 @@ class Test(unittest.TestCase):
         #Login
         #Click on the "add dataset" button on the home page
         #Select the zip file
+        #Click on the "upload" button
         #Click on the "finish" button
         #Go to the Datasets page
         #TEST CONDITION: Check the dataset is there
@@ -69,7 +74,59 @@ class Test(unittest.TestCase):
         #Go to the datasets page
         #TEST CONDITION: Check the dataset is not there
 
-        pass
+
+        #Login
+        self.login()
+
+        #Click on the "add dataset" button on the home page
+        add_dataset_link = self.browser.find_element_by_id('add_dataset')
+        add_dataset_link.click()
+
+        #enter the zip file to upload
+        zip_file_field = self.browser.find_element_by_id('zip_file')
+        path = os.path.abspath(TEST_ZIP_FILE)
+        zip_file_field.text = path
+
+        #Click on the "upload" button
+        zip_file_upload_link = self.browser.find_element_by_id('zip_file_upload')
+        zip_file_upload_link.click()
+        #Wait for the file to upload
+        element = WebDriverWait(driver, 10).until(
+            EC.text_to_be_present_in_element_value((By.ID, 'field-title'), TEST_TITLE)
+        )
+
+        #save the form
+        zip_file_field.submit()
+
+        #Go to the datasets page
+        self.browser.find_element_by_link_text('Datasets').click()
+
+        #Check our new dataset is there
+        dataset_link = self.browser.find_element_by_link_text(TEST_TITLE)
+
+
+        #CLEAN UP
+
+        #Click on the dataset
+        dataset_link.click()
+
+        #Click on the "manage" button
+        self.browser.find_element_by_link_text('Manage').click()
+
+        #Click on delete
+        self.browser.find_element_by_link_text('Delete').click()
+
+        #Click on confirm
+        self.browser.find_element_by_link_text('Confirm').click()        
+
+        #Go to the datasets page
+        self.browser.find_element_by_link_text('Datasets').click()
+
+        #TEST CONDITION: Check the dataset is not there
+        link_list = self.browser.find_elements_by_link_text(TEST_TITLE)
+        self.assertTrue(len(link_list) == 0)
+
+
 
 
     #support function for logging in
